@@ -1,59 +1,226 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏦 Sistem Analisis Kredit - Rule-Based Decision System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem analisis kredit berbasis logika proposisional dengan 3-tier decision untuk evaluasi kelayakan pengajuan kredit.
 
-## About Laravel
+## 📋 Deskripsi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Aplikasi ini dibuat dengan tujuan untuk memenuhi tugas akhir mata kuliah **logika informatika**. mengimplementasikan sistem keputusan berbasis aturan (rule-based) menggunakan logika proposisional untuk menganalisis kelayakan kredit berdasarkan 3 kriteria utama:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Penghasilan Bulanan** (P)
+2. **Riwayat Tunggakan** (Q)  
+3. **Status Pekerjaan** (R)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🎯 Logika Keputusan (3-Tier)
 
-## Learning Laravel
+### Tier 1: SANGAT LAYAK (ACC) ✓
+```
+P ∧ Q ∧ R = TRUE
+```
+- Penghasilan > Rp 5.000.000 ✓
+- Tidak ada tunggakan ✓
+- Status kerja tetap ✓
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Tier 2: PERLU PENINJAUAN ⚠
+```
+P ∧ ¬(Q ∧ R) = TRUE
+```
+- Penghasilan > Rp 5.000.000 ✓
+- TAPI ada tunggakan ATAU status kontrak
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Tier 3: PENGAJUAN DITOLAK ✗
+```
+¬P = TRUE
+```
+- Penghasilan ≤ Rp 5.000.000 (langsung ditolak)
 
-## Laravel Sponsors
+## 📊 Tabel Kebenaran
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| No | P (>5jt) | Q (No Debt) | R (Tetap) | Logika         | Status              |
+|----|----------|-------------|-----------|----------------|---------------------|
+| 1  | T        | T           | T         | P ∧ (Q ∧ R)    | SANGAT LAYAK (ACC)  |
+| 2  | T        | T           | F         | P ∧ ¬(Q ∧ R)   | PERLU PENINJAUAN    |
+| 3  | T        | F           | T         | P ∧ ¬(Q ∧ R)   | PERLU PENINJAUAN    |
+| 4  | T        | F           | F         | P ∧ ¬(Q ∧ R)   | PERLU PENINJAUAN    |
+| 5  | F        | T           | T         | ¬P             | PENGAJUAN DITOLAK   |
+| 6  | F        | T           | F         | ¬P             | PENGAJUAN DITOLAK   |
+| 7  | F        | F           | T         | ¬P             | PENGAJUAN DITOLAK   |
+| 8  | F        | F           | F         | ¬P             | PENGAJUAN DITOLAK   |
 
-### Premium Partners
+## 🚀 Instalasi
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Prerequisites
+- PHP >= 8.1
+- Composer
+- Laravel >= 10.x
+- Node.js & NPM (untuk Vite)
 
-## Contributing
+### Langkah-langkah
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. Clone repository atau salin file-file yang diperlukan
 
-## Code of Conduct
+2. Install dependencies:
+```bash
+composer install
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. Setup environment:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-## Security Vulnerabilities
+4. Compile assets:
+```bash
+npm run dev
+# atau untuk production
+npm run build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. Jalankan server:
+```bash
+php artisan serve
+```
 
-## License
+6. Buka browser: `http://localhost:8000`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📁 Struktur File
+
+```
+app/
+├── Http/
+│   └── Controllers/
+│       └── CreditController.php       # Controller utama
+│
+resources/
+├── views/
+│   └── credit/
+│       └── show.blade.php             # View form & hasil
+│
+routes/
+└── index.php                            # Route definitions
+```
+
+## 💻 Penggunaan
+
+### 1. Input Data
+Masukkan 3 parameter:
+- **Penghasilan Bulanan**: Nominal dalam rupiah (contoh: 7500000)
+- **Riwayat Tunggakan**: "TIDAK ADA" atau "ADA"
+- **Status Kerja**: "TETAP" atau "KONTRAK"
+
+### 2. Proses Analisis
+Klik tombol "Jalankan Diagnosa ⚡" untuk memproses
+
+### 3. Lihat Hasil
+Sistem akan menampilkan:
+- **Status Keputusan**: ACC / PENINJAUAN / DITOLAK
+- **Deskripsi**: Penjelasan keputusan
+- **Breakdown**: Detail evaluasi setiap kondisi
+- **Formula Logika**: Representasi proposisional
+
+### 4. Ulangi
+Klik "↺ Ulangi Analisis" untuk input baru
+
+## 🧪 Contoh Test Cases
+
+### Test Case 1: ACC
+```
+Input:
+- Penghasilan: Rp 7.500.000
+- Tunggakan: Tidak ada
+- Status: Tetap
+
+Output: ✓ SANGAT LAYAK (ACC)
+Logic: P ∧ Q ∧ R = TRUE
+```
+
+### Test Case 2: Peninjauan (Ada Tunggakan)
+```
+Input:
+- Penghasilan: Rp 6.000.000
+- Tunggakan: Ada
+- Status: Tetap
+
+Output: ⚠ PERLU PENINJAUAN
+Logic: P ∧ ¬(Q ∧ R) = TRUE
+```
+
+### Test Case 3: Peninjauan (Status Kontrak)
+```
+Input:
+- Penghasilan: Rp 8.000.000
+- Tunggakan: Tidak ada
+- Status: Kontrak
+
+Output: ⚠ PERLU PENINJAUAN
+Logic: P ∧ ¬(Q ∧ R) = TRUE
+```
+
+### Test Case 4: Ditolak
+```
+Input:
+- Penghasilan: Rp 4.000.000
+- Tunggakan: Tidak ada
+- Status: Tetap
+
+Output: ✗ PENGAJUAN DITOLAK
+Logic: ¬P = TRUE
+```
+
+## 🔧 Konfigurasi
+
+Untuk mengubah threshold penghasilan, edit file `CreditController.php`:
+
+```php
+// Line 34
+$highIncome = $income > 5_000_000; // Ubah nilai 5_000_000
+```
+
+## 🎨 Fitur UI/UX
+
+- ✅ Responsive design (mobile-friendly)
+- ✅ Neobrutalism aesthetic
+- ✅ Real-time client-side validation
+- ✅ Loading state dengan animasi
+- ✅ Breakdown keputusan yang detail
+- ✅ Formula logika proposisional
+- ✅ Smooth slide-in animation untuk hasil
+- ✅ Accessible (screen reader friendly)
+
+## 🧮 Pseudocode
+
+```
+ALGORITMA AnalisaKredit(penghasilan, tunggakan, statusKerja)
+
+INPUT:
+  penghasilan  : integer
+  tunggakan    : boolean
+  statusKerja  : boolean (true = tetap)
+
+OUTPUT:
+  status       : string
+
+PROSES:
+  IF penghasilan > 5000000 THEN
+    IF tunggakan = false AND statusKerja = true THEN
+      RETURN "SANGAT LAYAK (ACC)"
+    ELSE
+      RETURN "PERLU PENINJAUAN"
+    END IF
+  ELSE
+    RETURN "PENGAJUAN DITOLAK"
+  END IF
+```
+
+## 🤝 Kontribusi
+
+Sistem ini dikembangkan sebagai proyek pembelajaran logika proposisional dalam konteks real-world decision system.
+
+## 📄 Lisensi
+
+Educational purpose - Logika Informatika
+
+---
+
+**Catatan**: Sistem ini adalah implementasi edukatif dan belum mencakup semua aspek analisis kredit di dunia nyata seperti credit scoring, analisis risiko lanjutan, dll.
